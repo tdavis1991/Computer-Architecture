@@ -20,11 +20,16 @@ class CPU:
 
         self.IR = "00000000"
 
+        self.FL = 0b00000000
+
         self.CMD = {
             0b10000010: self.LDI,
             0b01000111: self.PRN,
             0b00000001: self.HLT,
-            # 0b10100010: self.MUL
+            0b10100111: self.CMP,
+            0b01010100: self.JMP,
+            0b01010101: self.JEQ,
+            0b01010110: self.JNE
         }
 
     def load(self):
@@ -67,7 +72,25 @@ class CPU:
         self.reg[register] = self.ram_read(self.PC+2)
         self.PC += 3
 
-    # def MUL()
+    def CMP(self):
+        reg_a = self.ram_read(self.PC+1)
+        reg_b = self.ram_read(self.PC+2)
+
+        # 00000LGE
+        #Set self.FL to 0b00000001(equal) if both registers are equal
+        if self.reg[reg_a] == self.reg[reg_b]:
+            self.FL = 0b00000001
+        #Set self.FL to 0b00000100(less than) if register a is less than register b
+        elif self.reg[reg_a] < self.reg[reg_b]:
+            self.FL = 0b00000100
+        #Set self.FL to 0b00000010(greater than) if register a is greater than register b
+        elif self.reg[reg_a] > self.reg[reg_b]:
+            self.FL = 0b00000010
+
+        self.PC += 3
+    
+    def JMP(self):
+        
 
     def alu(self, op, reg_a, reg_b):
         """ALU operations."""
